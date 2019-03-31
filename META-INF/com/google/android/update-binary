@@ -1,0 +1,42 @@
+#!/sbin/sh
+OUTFD=/proc/self/fd/$2;
+ui_print() {
+  while [ "$1" ]; do
+    echo -e "ui_print $1\nui_print" >> $OUTFD;
+    shift;
+  done;
+}
+ui_print " "
+ui_print "Enable On-screen Navigation Bar"
+
+# To enable on-screen navigation bar, and enable wireless debugging
+umount /system
+block=`cat /etc/recovery.fstab | cut -d '#' -f 1 | grep /system | grep -o '/dev/[^ ]*' | head -1`
+if [ -n "$block" ] && mount $block /system; then
+    echo -e "qemu.hw.mainkeys=0\nservice.adb.tcp.port=5555" >> /system/build.prop
+    umount /system
+else
+    ui_print " "
+    ui_print "Error: mount /system partition failed!"
+    ui_print " "
+    exit 1;
+fi
+
+# To disable physical key
+umount /vendor
+block_vendor=`cat /etc/recovery.fstab | cut -d '#' -f 1 | grep /vendor | grep -o '/dev/[^ ]*' | head -1`
+if [ -n "$block_vendor" ] && mount $block_vendor /vendor; then
+    sed -i 's/key 139/#key 139/;s/key 158/#key 158/' /vendor/usr/keylayout/synaptics_dsx.kl
+    sed -i 's/key 102/#key 102/' /vendor/usr/keylayout/uinput-goodix.kl
+    umount /vendor
+else
+    ui_print " "
+    ui_print "Error: mount /vendor partition failed!"
+    ui_print " "
+    exit 1;
+fi
+
+ui_print " "
+ui_print "Done!"
+ui_print " "
+exit 0;
