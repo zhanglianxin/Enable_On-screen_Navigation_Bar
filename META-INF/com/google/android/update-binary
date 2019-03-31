@@ -24,7 +24,7 @@ fi
 
 # To disable physical key
 umount /vendor
-block_vendor=`cat /etc/recovery.fstab | cut -d '#' -f 1 | grep /vendor | grep -o '/dev/[^ ]*' | head -1`
+block_vendor=`cat /etc/recovery.fstab | cut -d '#' -f 1 | grep /vendor | grep -o '/dev/[^ ]*' | head -1 | awk '{print $1}'`
 if [ -n "$block_vendor" ] && mount $block_vendor /vendor; then
     sed -i 's/key 139/#key 139/;s/key 158/#key 158/' /vendor/usr/keylayout/synaptics_dsx.kl
     sed -i 's/key 102/#key 102/' /vendor/usr/keylayout/uinput-goodix.kl
