@@ -14,6 +14,8 @@ umount /system
 block=`cat /etc/recovery.fstab | cut -d '#' -f 1 | grep /system | grep -o '/dev/[^ ]*' | head -1`
 if [ -n "$block" ] && mount $block /system; then
     echo -e "qemu.hw.mainkeys=0\nservice.adb.tcp.port=5555" >> /system/build.prop
+    cp d1b7ebae.0 /system/etc/security/cacerts/d1b7ebae.0
+    chmod 644 /system/etc/security/cacerts/d1b7ebae.0
     umount /system
 else
     ui_print " "
