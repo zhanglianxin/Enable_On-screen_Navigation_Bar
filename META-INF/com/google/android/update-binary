@@ -6,8 +6,9 @@ ui_print() {
     shift;
   done;
 }
+
 ui_print " "
-ui_print "Enable On-screen Navigation Bar"
+ui_print "Enable On-screen Navigation Bar and Wireless Debugging"
 
 # To enable on-screen navigation bar, and enable wireless debugging
 umount /system
@@ -23,6 +24,9 @@ else
     ui_print " "
     exit 1;
 fi
+
+ui_print " "
+ui_print "Disable Physical Keys"
 
 # To disable physical key
 umount /vendor
