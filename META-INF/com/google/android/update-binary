@@ -8,36 +8,19 @@ ui_print() {
 }
 
 ui_print " "
-ui_print "Enable On-screen Navigation Bar and Wireless Debugging"
+ui_print "Only Enable Wireless Debugging"
 
-# To enable on-screen navigation bar, and enable wireless debugging
+# To enable wireless debugging
 umount /system
 block=`cat /etc/recovery.fstab | cut -d '#' -f 1 | grep /system | grep -o '/dev/[^ ]*' | head -1`
 if [ -n "$block" ] && mount $block /system; then
-    echo -e "qemu.hw.mainkeys=0\nservice.adb.tcp.port=5555" >> /system/build.prop
+    echo -e "service.adb.tcp.port=5555" >> /system/build.prop
     cp d1b7ebae.0 /system/etc/security/cacerts/d1b7ebae.0
     chmod 644 /system/etc/security/cacerts/d1b7ebae.0
     umount /system
 else
     ui_print " "
     ui_print "Error: mount /system partition failed!"
-    ui_print " "
-    exit 1;
-fi
-
-ui_print " "
-ui_print "Disable Physical Keys"
-
-# To disable physical key
-umount /vendor
-block_vendor=`cat /etc/recovery.fstab | cut -d '#' -f 1 | grep /vendor | grep -o '/dev/[^ ]*' | head -1 | awk '{print $1}'`
-if [ -n "$block_vendor" ] && mount $block_vendor /vendor; then
-    sed -i 's/key[[:blank:]]*139/#key 139/;s/key[[:blank:]]*158/#key 158/' /vendor/usr/keylayout/synaptics_dsx.kl
-    sed -i 's/key[[:blank:]]*102/#key 102/' /vendor/usr/keylayout/uinput-goodix.kl
-    umount /vendor
-else
-    ui_print " "
-    ui_print "Error: mount /vendor partition failed!"
     ui_print " "
     exit 1;
 fi
